@@ -1,0 +1,56 @@
+version: "3"
+
+networks:
+  loki:
+
+services:
+
+  app:
+    build: .
+    restart: always
+    ports:
+      - "8081:8081"
+
+  loki:
+    image: grafana/loki:2.0.0
+    ports:
+      - "3100:3100"
+    volumes:
+      - "./etc/loki:/mnt/config"
+    command: -config.file=/mnt/config/loki-config.yaml
+    networks:
+      - loki
+
+  promtail:
+    image: grafana/promtail:2.0.0
+    volumes:
+      - "./etc/promtail:/mnt/config"
+      - "/var/lib/docker/containers:/var/lib/docker/containers"
+    command: -config.file=/mnt/config/promtail-config.yaml
+    networks:
+      - loki
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./var/grafana/grafana_data:/var/lib/grafana"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=foobar
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - loki
+
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+    volumes:
+      - ./etc/alertmanager.yml:/etc/alertmanager/config.yml
+    ports:
+      - 9093:9093
+    networks:
+      - public
