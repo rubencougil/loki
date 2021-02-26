@@ -1,5 +1,7 @@
 # 📶 Loki/Grafana Docker + Sample Go App
 
+[![Build](https://github.com/rubencougil/loki/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/rubencougil/loki/actions/workflows/main.yml)
+
 Logging System built using **Loki** . It uses **Grafana** as the UI.
 
 ![Loki](https://user-images.githubusercontent.com/1073799/109333973-644ea000-7860-11eb-8c8a-65f4bb7ede1f.jpg)
